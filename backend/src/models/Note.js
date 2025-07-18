@@ -8,7 +8,14 @@ const noteSchema = new mongoose.Schema(
     title: { type: String, required: true },
     content: { type: String, required: true },
     likes: { type: Number, default: 0 },
-    password: { type: String, required: true }, // <-- now required
+    password: { type: String, required: true },
+    image: { type: String },
+    comments: [
+      {
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ], // <-- add this
   },
   { timestamps: true } // createdAt, updatedAt
 );

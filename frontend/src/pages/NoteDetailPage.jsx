@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
@@ -12,6 +11,9 @@ const NoteDetailPage = () => {
   const [password, setPassword] = useState("");
   const [deletePassword, setDeletePassword] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [image, setImage] = useState(note?.image || "");
+  const [commentText, setCommentText] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,6 +24,7 @@ const NoteDetailPage = () => {
       try {
         const res = await api.get(`/notes/${id}`);
         setNote(res.data);
+        setImage(res.data.image || "");
       } catch (error) {
         console.log("Error in fetching note", error);
         toast.error("Failed to fetch the note");
@@ -59,13 +62,41 @@ const NoteDetailPage = () => {
     setSaving(true);
 
     try {
-      await api.put(`/notes/${id}`, { ...note, password });
+      await api.put(`/notes/${id}`, { ...note, password, image });
       toast.success("Note updated successfully");
       navigate("/");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to update note");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => setImage(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleAddComment = async () => {
+    if (!commentText.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    setCommentLoading(true);
+    try {
+      const res = await api.post(`/notes/${id}/comments`, { text: commentText });
+      setNote((prev) => ({
+        ...prev,
+        comments: [...(prev.comments || []), res.data],
+      }));
+      setCommentText("");
+    } catch (error) {
+      toast.error("Failed to add comment");
+    } finally {
+      setCommentLoading(false);
     }
   };
 
@@ -135,11 +166,61 @@ const NoteDetailPage = () => {
                 />
               </div>
 
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="label-text">Image (optional)</span>
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered"
+                  onChange={handleImageChange}
+                />
+                {image && (
+                  <img src={image} alt="Preview" className="mt-2 max-h-40 rounded" />
+                )}
+              </div>
+
               <div className="card-actions justify-end">
                 <button className="btn btn-primary" disabled={saving} onClick={handleSave}>
                   {saving ? "Saving..." : "Save Changes"}
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* Comments Section */}
+          <div className="mt-8">
+            <h3 className="text-lg font-bold mb-2">Comments</h3>
+            <div className="mb-4 flex gap-2">
+              <input
+                type="text"
+                className="input input-bordered flex-1"
+                placeholder="Add a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                disabled={commentLoading}
+              />
+              <button
+                className="btn btn-primary"
+                onClick={handleAddComment}
+                disabled={commentLoading}
+              >
+                {commentLoading ? "Adding..." : "Add"}
+              </button>
+            </div>
+            <div>
+              {(note.comments || []).length === 0 && (
+                <div className="text-base-content/60">No comments yet.</div>
+              )}
+              {(note.comments || []).map((c, idx) => (
+                <div key={idx} className="mb-2 p-2 rounded bg-base-200">
+                  <div className="text-base-content">{c.text}</div>
+                  <div className="text-xs text-base-content/50">
+                    {c.createdAt ? new Date(c.createdAt).toLocaleString() : ""}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

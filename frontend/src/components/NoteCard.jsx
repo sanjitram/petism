@@ -39,6 +39,9 @@ const NoteCard = ({ note, setNotes }) => {
       border-t-4 border-solid border-[#00FF9D]"
     >
       <div className="card-body">
+        {note.image && (
+          <img src={note.image} alt="Note" className="mb-2 max-h-32 rounded" />
+        )}
         <h3 className="card-title text-base-content">{note.title}</h3>
         <p className="text-base-content/70 line-clamp-3">{note.content}</p>
         <div className="card-actions justify-between items-center mt-4">
