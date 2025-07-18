@@ -57,6 +57,10 @@ const NoteCard = ({ note, setNotes }) => {
               <ThumbsUpIcon className="size-4" />
               <span>{note.likes || 0}</span>
             </button>
+            {/* Show likes count */}
+            <span className="text-xs text-primary font-bold ml-2">
+              {note.likes || 0} Likes
+            </span>
             <PenSquareIcon className="size-4" />
             <button
               className="btn btn-ghost btn-xs text-error"

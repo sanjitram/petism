@@ -108,3 +108,37 @@ export async function addComment(req, res) {
     res.status(500).json({ message: "Internal server error" });
   }
 }
+
+export async function likeComment(req, res) {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: "Note not found" });
+
+    const comment = note.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    comment.likes = (comment.likes || 0) + 1;
+    await note.save();
+
+    res.status(200).json(comment);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function dislikeComment(req, res) {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: "Note not found" });
+
+    const comment = note.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    comment.dislikes = (comment.dislikes || 0) + 1;
+    await note.save();
+
+    res.status(200).json(comment);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}

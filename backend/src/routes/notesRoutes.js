@@ -6,7 +6,9 @@ import {
   getNoteById,
   updateNote,
   likeNote, // add this
-  addComment // add this
+  addComment, // add this
+  likeComment,
+  dislikeComment,
 } from "../controllers/notesController.js";
 
 const router = express.Router();
@@ -18,5 +20,7 @@ router.put("/:id", updateNote);
 router.delete("/:id", deleteNote);
 router.post("/:id/like", likeNote); // add this
 router.post("/:id/comments", addComment); // add this
+router.post("/:id/comments/:commentId/like", likeComment);
+router.post("/:id/comments/:commentId/dislike", dislikeComment);
 
 export default router;

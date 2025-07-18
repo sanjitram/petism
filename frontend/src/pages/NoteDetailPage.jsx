@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
-import { ArrowLeftIcon, LoaderIcon, Trash2Icon } from "lucide-react";
+import { ArrowLeftIcon, LoaderIcon, Trash2Icon, ThumbsUpIcon, ThumbsDownIcon } from "lucide-react";
 
 const NoteDetailPage = () => {
   const [note, setNote] = useState(null);
@@ -100,6 +100,46 @@ const NoteDetailPage = () => {
     }
   };
 
+  const handleLikeComment = async (commentId) => {
+    try {
+      const res = await api.post(`/notes/${id}/comments/${commentId}/like`);
+      setNote((prev) => ({
+        ...prev,
+        comments: prev.comments.map((c) =>
+          c._id === commentId ? { ...c, likes: res.data.likes } : c
+        ),
+      }));
+    } catch {
+      toast.error("Failed to like comment");
+    }
+  };
+
+  const handleDislikeComment = async (commentId) => {
+    try {
+      const res = await api.post(`/notes/${id}/comments/${commentId}/dislike`);
+      setNote((prev) => ({
+        ...prev,
+        comments: prev.comments.map((c) =>
+          c._id === commentId ? { ...c, dislikes: res.data.dislikes } : c
+        ),
+      }));
+    } catch {
+      toast.error("Failed to dislike comment");
+    }
+  };
+
+  const handleLikeNote = async () => {
+    try {
+      const res = await api.post(`/notes/${id}/like`);
+      setNote((prev) => ({
+        ...prev,
+        likes: res.data.likes,
+      }));
+    } catch {
+      toast.error("Failed to like note");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-base-200 flex items-center justify-center">
@@ -128,6 +168,21 @@ const NoteDetailPage = () => {
 
           <div className="card bg-base-100">
             <div className="card-body">
+              {/* Like button and count */}
+              <div className="flex items-center gap-2 mb-4">
+                <button
+                  className="btn btn-ghost btn-xs flex items-center"
+                  onClick={handleLikeNote}
+                  title="Like this note"
+                >
+                  <ThumbsUpIcon className="size-4" />
+                  <span>{note.likes || 0}</span>
+                </button>
+                <span className="text-xs text-primary font-bold ml-2">
+                  {note.likes || 0} Likes
+                </span>
+              </div>
+
               <div className="form-control mb-4">
                 <label className="label">
                   <span className="label-text">Title</span>
@@ -214,10 +269,28 @@ const NoteDetailPage = () => {
                 <div className="text-base-content/60">No comments yet.</div>
               )}
               {(note.comments || []).map((c, idx) => (
-                <div key={idx} className="mb-2 p-2 rounded bg-base-200">
+                <div key={c._id || idx} className="mb-2 p-2 rounded bg-base-200">
                   <div className="text-base-content">{c.text}</div>
-                  <div className="text-xs text-base-content/50">
-                    {c.createdAt ? new Date(c.createdAt).toLocaleString() : ""}
+                  <div className="flex items-center gap-2 mt-1">
+                    <button
+                      className="btn btn-ghost btn-xs flex items-center"
+                      onClick={() => handleLikeComment(c._id)}
+                      title="Like"
+                    >
+                      <ThumbsUpIcon className="size-4" />
+                      <span>{c.likes || 0}</span>
+                    </button>
+                    <button
+                      className="btn btn-ghost btn-xs flex items-center"
+                      onClick={() => handleDislikeComment(c._id)}
+                      title="Dislike"
+                    >
+                      <ThumbsDownIcon className="size-4" />
+                      <span>{c.dislikes || 0}</span>
+                    </button>
+                    <span className="text-xs text-base-content/50 ml-2">
+                      {c.createdAt ? new Date(c.createdAt).toLocaleString() : ""}
+                    </span>
                   </div>
                 </div>
               ))}
