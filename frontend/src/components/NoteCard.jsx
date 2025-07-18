@@ -1,4 +1,4 @@
-import { PenSquareIcon, Trash2Icon } from "lucide-react";
+import { PenSquareIcon, Trash2Icon, ThumbsUpIcon } from "lucide-react";
 import { Link } from "react-router";
 import { formatDate } from "../lib/utils";
 import api from "../lib/axios";
@@ -20,6 +20,18 @@ const NoteCard = ({ note, setNotes }) => {
     }
   };
 
+  const handleLike = async (e, id) => {
+    e.preventDefault();
+    try {
+      const res = await api.post(`/notes/${id}/like`);
+      setNotes((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, likes: res.data.likes } : n))
+      );
+    } catch (error) {
+      toast.error("Failed to like note");
+    }
+  };
+
   return (
     <Link
       to={`/note/${note._id}`}
@@ -33,7 +45,15 @@ const NoteCard = ({ note, setNotes }) => {
           <span className="text-sm text-base-content/60">
             {formatDate(new Date(note.createdAt))}
           </span>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
+            <button
+              className="btn btn-ghost btn-xs flex items-center"
+              onClick={(e) => handleLike(e, note._id)}
+              title="Like"
+            >
+              <ThumbsUpIcon className="size-4" />
+              <span>{note.likes || 0}</span>
+            </button>
             <PenSquareIcon className="size-4" />
             <button
               className="btn btn-ghost btn-xs text-error"
