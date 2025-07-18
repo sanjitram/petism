@@ -7,6 +7,7 @@ import api from "../lib/axios";
 const CreatePage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const CreatePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title.trim() || !content.trim()) {
+    if (!title.trim() || !content.trim() || !password.trim()) {
       toast.error("All fields are required");
       return;
     }
@@ -24,6 +25,7 @@ const CreatePage = () => {
       await api.post("/notes", {
         title,
         content,
+        password, // include password
       });
 
       toast.success("Note created successfully!");
@@ -78,6 +80,19 @@ const CreatePage = () => {
                     className="textarea textarea-bordered h-32"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Password</span>
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Set a password for this note"
+                    className="input input-bordered"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
 

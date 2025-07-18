@@ -9,6 +9,9 @@ const NoteDetailPage = () => {
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [password, setPassword] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,15 +34,16 @@ const NoteDetailPage = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
-
+    if (!deletePassword) {
+      toast.error("Please enter the note password");
+      return;
+    }
     try {
-      await api.delete(`/notes/${id}`);
+      await api.delete(`/notes/${id}`, { data: { password: deletePassword } });
       toast.success("Note deleted");
       navigate("/");
     } catch (error) {
-      console.log("Error deleting the note:", error);
-      toast.error("Failed to delete note");
+      toast.error(error.response?.data?.message || "Failed to delete note");
     }
   };
 
@@ -48,16 +52,18 @@ const NoteDetailPage = () => {
       toast.error("Please add a title or content");
       return;
     }
-
+    if (!password) {
+      toast.error("Please enter the note password");
+      return;
+    }
     setSaving(true);
 
     try {
-      await api.put(`/notes/${id}`, note);
+      await api.put(`/notes/${id}`, { ...note, password });
       toast.success("Note updated successfully");
       navigate("/");
     } catch (error) {
-      console.log("Error saving the note:", error);
-      toast.error("Failed to update note");
+      toast.error(error.response?.data?.message || "Failed to update note");
     } finally {
       setSaving(false);
     }
@@ -80,7 +86,10 @@ const NoteDetailPage = () => {
               <ArrowLeftIcon className="h-5 w-5" />
               Back to Notes
             </Link>
-            <button onClick={handleDelete} className="btn btn-error btn-outline">
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="btn btn-error btn-outline"
+            >
               <Trash2Icon className="h-5 w-5" />
               Delete Note
             </button>
@@ -113,6 +122,19 @@ const NoteDetailPage = () => {
                 />
               </div>
 
+              <div className="form-control mb-4">
+                <label className="label">
+                  <span className="label-text">Password</span>
+                </label>
+                <input
+                  type="password"
+                  placeholder="Note password"
+                  className="input input-bordered"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
               <div className="card-actions justify-end">
                 <button className="btn btn-primary" disabled={saving} onClick={handleSave}>
                   {saving ? "Saving..." : "Save Changes"}
@@ -120,6 +142,37 @@ const NoteDetailPage = () => {
               </div>
             </div>
           </div>
+
+          {/* Delete Modal */}
+          {showDeleteModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+              <div className="bg-base-100 p-6 rounded shadow-lg max-w-sm w-full">
+                <h3 className="text-lg font-bold mb-2">Delete Note</h3>
+                <p className="mb-4">Enter the note password to confirm deletion:</p>
+                <input
+                  type="password"
+                  className="input input-bordered w-full mb-4"
+                  placeholder="Note password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                />
+                <div className="flex justify-end gap-2">
+                  <button
+                    className="btn btn-ghost"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-error"
+                    onClick={handleDelete}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
