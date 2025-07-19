@@ -28,10 +28,11 @@ const __dirname = path.resolve();
 // Update the CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === "production" 
-    ? "https://your-frontend-url.onrender.com"
+    ? ["https://mern-notes-frontend-h3mc.onrender.com", "https://mern-notes-backend-6kxk.onrender.com"]
     : "http://localhost:5173",
   credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"]
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 
