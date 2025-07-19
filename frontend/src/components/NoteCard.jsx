@@ -6,17 +6,21 @@ import toast from "react-hot-toast";
 
 const NoteCard = ({ note, setNotes }) => {
   const handleDelete = async (e, id) => {
-    e.preventDefault(); // get rid of the navigation behaviour
+    e.preventDefault();
 
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
+    // First ask for password
+    const password = prompt("Enter note password to delete:");
+    if (!password) return;
 
     try {
-      await api.delete(`/notes/${id}`);
-      setNotes((prev) => prev.filter((note) => note._id !== id)); // get rid of the deleted one
+      await api.delete(`/notes/${id}`, {
+        data: { password }, // Send password in request body
+      });
+      setNotes((prev) => prev.filter((note) => note._id !== id));
       toast.success("Note deleted successfully");
     } catch (error) {
       console.log("Error in handleDelete", error);
-      toast.error("Failed to delete note");
+      toast.error(error.response?.data?.message || "Failed to delete note");
     }
   };
 
