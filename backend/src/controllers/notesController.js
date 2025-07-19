@@ -23,12 +23,20 @@ export async function getNoteById(req, res) {
 
 export async function createNote(req, res) {
   try {
-    const { title, content, password, image } = req.body;
+    const { title, content, password, image, targetLikes } = req.body;
     if (!password) return res.status(400).json({ message: "Password is required" });
+    if (!targetLikes) return res.status(400).json({ message: "Target likes is required" });
 
-    const note = new Note({ title, content, password, image });
+    const note = new Note({ 
+      title, 
+      content, 
+      password, 
+      image,
+      targetLikes: parseInt(targetLikes),
+      isSuccessful: false
+    });
+    
     const savedNote = await note.save();
-
     res.status(201).json(savedNote);
   } catch (error) {
     console.error("Error in createNote controller", error);
@@ -78,24 +86,34 @@ export async function deleteNote(req, res) {
 
 export async function likeNote(req, res) {
   try {
-    const userId = req.user.id; // Get user ID from auth middleware
+    const userId = req.user.id;
     const note = await Note.findById(req.params.id);
     
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
 
-    // Check if user already liked the note
     if (note.likedBy.includes(userId)) {
-      return res.status(400).json({ message: "You've already liked this note" });
+      return res.status(400).json({ message: "You've already liked this petition" });
     }
 
     // Add user to likedBy array and increment likes
     note.likedBy.push(userId);
     note.likes += 1;
+
+    // Check if target reached
+    if (note.likes >= note.targetLikes && !note.isSuccessful) {
+      note.isSuccessful = true;
+    }
+
     await note.save();
 
-    res.status(200).json({ likes: note.likes, liked: true });
+    res.status(200).json({ 
+      likes: note.likes, 
+      liked: true,
+      isSuccessful: note.isSuccessful,
+      targetLikes: note.targetLikes 
+    });
   } catch (error) {
     console.error("Error in likeNote controller", error);
     res.status(500).json({ message: "Internal server error" });

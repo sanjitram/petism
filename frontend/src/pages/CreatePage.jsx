@@ -9,6 +9,7 @@ const CreatePage = () => {
   const [content, setContent] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState("");
+  const [targetLikes, setTargetLikes] = useState(""); // Add this line
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const CreatePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title.trim() || !content.trim() || !password.trim()) {
+    if (!title.trim() || !content.trim() || !password.trim() || !targetLikes) {
       toast.error("All fields are required");
       return;
     }
@@ -34,21 +35,24 @@ const CreatePage = () => {
       await api.post("/notes", {
         title,
         content,
-        password, // include password
-        image, // include image
+        password,
+        image,
+        targetLikes: parseInt(targetLikes), // Make sure targetLikes is sent as a number
       });
 
       toast.success("Petition created successfully!");
       navigate("/");
     } catch (error) {
-      console.log("Error creating note", error);
-      if (error.response.status === 429) {
-        toast.error("Slow down! You're creating notes too fast", {
+      console.log("Error creating petition", error);
+      if (error.response?.status === 429) {
+        toast.error("Slow down! You're creating petitions too fast", {
           duration: 4000,
           icon: "💀",
         });
       } else {
-        toast.error("Failed to create petition");
+        toast.error(
+          error.response?.data?.message || "Failed to create petition"
+        );
       }
     } finally {
       setLoading(false);
@@ -123,6 +127,20 @@ const CreatePage = () => {
                       className="mt-2 max-h-40 rounded"
                     />
                   )}
+                </div>
+
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Target Likes</span>
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="How many likes to make this petition successful?"
+                    className="input input-bordered"
+                    value={targetLikes}
+                    onChange={(e) => setTargetLikes(e.target.value)}
+                    min="1"
+                  />
                 </div>
 
                 <div className="card-actions justify-end">

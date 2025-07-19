@@ -169,6 +169,26 @@ const NoteDetailPage = () => {
 
           <div className="card bg-base-100">
             <div className="card-body">
+              {/* Add success indicator */}
+              {note.isSuccessful && (
+                <div className="alert alert-success mb-4">
+                  <span>🎉 This petition has reached its goal of {note.targetLikes} likes!</span>
+                </div>
+              )}
+
+              {/* Progress bar */}
+              <div className="mb-4">
+                <div className="flex justify-between text-sm mb-1">
+                  <span>{note.likes} of {note.targetLikes} likes needed</span>
+                  <span>{Math.round((note.likes / note.targetLikes) * 100)}%</span>
+                </div>
+                <progress 
+                  className={`progress w-full ${note.isSuccessful ? 'progress-success' : 'progress-primary'}`}
+                  value={note.likes} 
+                  max={note.targetLikes}
+                />
+              </div>
+
               {/* Like button and count */}
               <div className="flex items-center gap-2 mb-4">
                 <button

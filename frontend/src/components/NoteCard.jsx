@@ -81,6 +81,27 @@ const NoteCard = ({ note, setNotes }) => {
             </button>
           </div>
         </div>
+
+        {/* Add progress indicator */}
+        <div className="mt-2">
+          <div className="flex justify-between text-sm mb-1">
+            <span>
+              {note.likes} of {note.targetLikes} likes
+            </span>
+            {note.isSuccessful && (
+              <span className="text-success font-bold">
+                ✓ Successful Petition!
+              </span>
+            )}
+          </div>
+          <progress
+            className={`progress w-full ${
+              note.isSuccessful ? "progress-success" : "progress-primary"
+            }`}
+            value={note.likes}
+            max={note.targetLikes}
+          />
+        </div>
       </div>
     </Link>
   );
