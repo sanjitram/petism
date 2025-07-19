@@ -1,13 +1,17 @@
+
+
 {
-  "name": "mern-thinkboard",
+  "name": "mern-notes",
   "version": "1.0.0",
+  "description": "Petition App",
   "main": "index.js",
   "scripts": {
-    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
-    "start": "npm run start --prefix backend"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+    "install-server": "cd backend && npm install",
+    "install-client": "cd frontend && npm install",
+    "install": "npm run install-server && npm run install-client",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  }
 }
