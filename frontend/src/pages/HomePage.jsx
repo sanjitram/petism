@@ -11,7 +11,8 @@ const HomePage = () => {
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState(""); // <-- add search state
+  const [search, setSearch] = useState("");
+  const [showSuccessful, setShowSuccessful] = useState(false); // Add this state
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -33,12 +34,17 @@ const HomePage = () => {
     fetchNotes();
   }, []);
 
-  // Filter notes based on search
-  const filteredNotes = notes.filter(
-    (note) =>
+  // Filter notes based on search and successful status
+  const filteredNotes = notes.filter((note) => {
+    const matchesSearch =
       note.title.toLowerCase().includes(search.toLowerCase()) ||
-      note.content.toLowerCase().includes(search.toLowerCase())
-  );
+      note.content.toLowerCase().includes(search.toLowerCase());
+
+    if (showSuccessful) {
+      return matchesSearch && note.isSuccessful;
+    }
+    return matchesSearch;
+  });
 
   return (
     <div className="min-h-screen">
@@ -47,8 +53,8 @@ const HomePage = () => {
       {isRateLimited && <RateLimitedUI />}
 
       <div className="max-w-7xl mx-auto p-4 mt-6">
-        {/* Search bar */}
-        <div className="mb-6 flex justify-center">
+        {/* Search and filter controls */}
+        <div className="mb-6 flex flex-col sm:flex-row justify-center items-center gap-4">
           <input
             type="text"
             className="input input-bordered w-full max-w-md"
@@ -56,9 +62,23 @@ const HomePage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button
+            className={`btn ${
+              showSuccessful ? "btn-primary" : "btn-outline"
+            } whitespace-nowrap`}
+            onClick={() => setShowSuccessful(!showSuccessful)}
+          >
+            {showSuccessful
+              ? "All Petitions"
+              : "Successful petitions"}
+          </button>
         </div>
 
-        {loading && <div className="text-center text-primary py-10">Loading petitions...</div>}
+        {loading && (
+          <div className="text-center text-primary py-10">
+            Loading petitions...
+          </div>
+        )}
 
         {filteredNotes.length === 0 && !isRateLimited && <NotesNotFound />}
 
