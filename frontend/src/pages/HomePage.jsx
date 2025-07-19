@@ -23,7 +23,7 @@ const HomePage = () => {
         if (error.response?.status === 429) {
           setIsRateLimited(true);
         } else {
-          toast.error("Failed to load notes");
+          toast.error("Failed to load petitions");
         }
       } finally {
         setLoading(false);
@@ -52,13 +52,13 @@ const HomePage = () => {
           <input
             type="text"
             className="input input-bordered w-full max-w-md"
-            placeholder="Search notes..."
+            placeholder="Search petitions..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        {loading && <div className="text-center text-primary py-10">Loading notes...</div>}
+        {loading && <div className="text-center text-primary py-10">Loading petitions...</div>}
 
         {filteredNotes.length === 0 && !isRateLimited && <NotesNotFound />}
 

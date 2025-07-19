@@ -26,8 +26,8 @@ const NoteDetailPage = () => {
         setNote(res.data);
         setImage(res.data.image || "");
       } catch (error) {
-        console.log("Error in fetching note", error);
-        toast.error("Failed to fetch the note");
+        console.log("Error in fetching petition", error);
+        toast.error("Failed to fetch the petition");
       } finally {
         setLoading(false);
       }
@@ -38,15 +38,15 @@ const NoteDetailPage = () => {
 
   const handleDelete = async () => {
     if (!deletePassword) {
-      toast.error("Please enter the note password");
+      toast.error("Please enter the password");
       return;
     }
     try {
       await api.delete(`/notes/${id}`, { data: { password: deletePassword } });
-      toast.success("Note deleted");
+      toast.success("Petition deleted");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete note");
+      toast.error(error.response?.data?.message || "Failed to delete petition ");
     }
   };
 
@@ -56,17 +56,17 @@ const NoteDetailPage = () => {
       return;
     }
     if (!password) {
-      toast.error("Please enter the note password");
+      toast.error("Please enter the petition password");
       return;
     }
     setSaving(true);
 
     try {
       await api.put(`/notes/${id}`, { ...note, password, image });
-      toast.success("Note updated successfully");
+      toast.success("Petition updated successfully");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update note");
+      toast.error(error.response?.data?.message || "Failed to update petition");
     } finally {
       setSaving(false);
     }
@@ -134,9 +134,10 @@ const NoteDetailPage = () => {
       setNote((prev) => ({
         ...prev,
         likes: res.data.likes,
+        liked: res.data.liked
       }));
-    } catch {
-      toast.error("Failed to like note");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to like petition");
     }
   };
 
@@ -155,14 +156,14 @@ const NoteDetailPage = () => {
           <div className="flex items-center justify-between mb-6">
             <Link to="/" className="btn btn-ghost">
               <ArrowLeftIcon className="h-5 w-5" />
-              Back to Notes
+              Back
             </Link>
             <button
               onClick={() => setShowDeleteModal(true)}
               className="btn btn-error btn-outline"
             >
               <Trash2Icon className="h-5 w-5" />
-              Delete Note
+              Delete Petition
             </button>
           </div>
 
@@ -171,9 +172,10 @@ const NoteDetailPage = () => {
               {/* Like button and count */}
               <div className="flex items-center gap-2 mb-4">
                 <button
-                  className="btn btn-ghost btn-xs flex items-center"
+                  className={`btn btn-ghost btn-xs flex items-center ${note.liked ? 'text-primary' : ''}`}
                   onClick={handleLikeNote}
-                  title="Like this note"
+                  title={note.liked ? "Already liked" : "Like"}
+                  disabled={note.liked}
                 >
                   <ThumbsUpIcon className="size-4" />
                   <span>{note.likes || 0}</span>
@@ -189,7 +191,7 @@ const NoteDetailPage = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Note title"
+                  placeholder="Petition title"
                   className="input input-bordered"
                   value={note.title}
                   onChange={(e) => setNote({ ...note, title: e.target.value })}
@@ -201,7 +203,7 @@ const NoteDetailPage = () => {
                   <span className="label-text">Content</span>
                 </label>
                 <textarea
-                  placeholder="Write your note here..."
+                  placeholder="Write content here..."
                   className="textarea textarea-bordered h-32"
                   value={note.content}
                   onChange={(e) => setNote({ ...note, content: e.target.value })}
@@ -214,7 +216,7 @@ const NoteDetailPage = () => {
                 </label>
                 <input
                   type="password"
-                  placeholder="Note password"
+                  placeholder="Petition password"
                   className="input input-bordered"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -301,8 +303,8 @@ const NoteDetailPage = () => {
           {showDeleteModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
               <div className="bg-base-100 p-6 rounded shadow-lg max-w-sm w-full">
-                <h3 className="text-lg font-bold mb-2">Delete Note</h3>
-                <p className="mb-4">Enter the note password to confirm deletion:</p>
+                <h3 className="text-lg font-bold mb-2">Delete petition</h3>
+                <p className="mb-4">Enter the password to confirm deletion:</p>
                 <input
                   type="password"
                   className="input input-bordered w-full mb-4"

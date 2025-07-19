@@ -38,7 +38,7 @@ const CreatePage = () => {
         image, // include image
       });
 
-      toast.success("Note created successfully!");
+      toast.success("Petition created successfully!");
       navigate("/");
     } catch (error) {
       console.log("Error creating note", error);
@@ -48,7 +48,7 @@ const CreatePage = () => {
           icon: "💀",
         });
       } else {
-        toast.error("Failed to create note");
+        toast.error("Failed to create petition");
       }
     } finally {
       setLoading(false);
@@ -66,7 +66,7 @@ const CreatePage = () => {
 
           <div className="card bg-base-100">
             <div className="card-body">
-              <h2 className="card-title text-2xl mb-4">Create New Note</h2>
+              <h2 className="card-title text-2xl mb-4">Create New Petition</h2>
               <form onSubmit={handleSubmit}>
                 <div className="form-control mb-4">
                   <label className="label">

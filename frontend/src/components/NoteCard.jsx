@@ -9,7 +9,7 @@ const NoteCard = ({ note, setNotes }) => {
     e.preventDefault();
 
     // First ask for password
-    const password = prompt("Enter note password to delete:");
+    const password = prompt("Enter petition password to delete:");
     if (!password) return;
 
     try {
@@ -17,10 +17,10 @@ const NoteCard = ({ note, setNotes }) => {
         data: { password }, // Send password in request body
       });
       setNotes((prev) => prev.filter((note) => note._id !== id));
-      toast.success("Note deleted successfully");
+      toast.success("Petition deleted successfully");
     } catch (error) {
       console.log("Error in handleDelete", error);
-      toast.error(error.response?.data?.message || "Failed to delete note");
+      toast.error(error.response?.data?.message || "Failed to delete petition");
     }
   };
 
@@ -29,10 +29,14 @@ const NoteCard = ({ note, setNotes }) => {
     try {
       const res = await api.post(`/notes/${id}/like`);
       setNotes((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, likes: res.data.likes } : n))
+        prev.map((n) =>
+          n._id === id
+            ? { ...n, likes: res.data.likes, liked: res.data.liked }
+            : n
+        )
       );
     } catch (error) {
-      toast.error("Failed to like note");
+      toast.error(error.response?.data?.message || "Failed to like petition");
     }
   };
 
@@ -54,9 +58,12 @@ const NoteCard = ({ note, setNotes }) => {
           </span>
           <div className="flex items-center gap-2">
             <button
-              className="btn btn-ghost btn-xs flex items-center"
+              className={`btn btn-ghost btn-xs flex items-center ${
+                note.liked ? "text-primary" : ""
+              }`}
               onClick={(e) => handleLike(e, note._id)}
-              title="Like"
+              title={note.liked ? "Already liked" : "Like"}
+              disabled={note.liked}
             >
               <ThumbsUpIcon className="size-4" />
               <span>{note.likes || 0}</span>

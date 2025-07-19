@@ -78,13 +78,24 @@ export async function deleteNote(req, res) {
 
 export async function likeNote(req, res) {
   try {
-    const note = await Note.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { likes: 1 } },
-      { new: true }
-    );
-    if (!note) return res.status(404).json({ message: "Note not found" });
-    res.status(200).json(note);
+    const userId = req.user.id; // Get user ID from auth middleware
+    const note = await Note.findById(req.params.id);
+    
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    // Check if user already liked the note
+    if (note.likedBy.includes(userId)) {
+      return res.status(400).json({ message: "You've already liked this note" });
+    }
+
+    // Add user to likedBy array and increment likes
+    note.likedBy.push(userId);
+    note.likes += 1;
+    await note.save();
+
+    res.status(200).json({ likes: note.likes, liked: true });
   } catch (error) {
     console.error("Error in likeNote controller", error);
     res.status(500).json({ message: "Internal server error" });
