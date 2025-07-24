@@ -46,51 +46,60 @@ const HomePage = () => {
     return matchesSearch;
   });
 
-  return (
-    <div className="min-h-screen">
-      <Navbar />
+ return (
+  <div className="min-h-screen">
+    <Navbar />
 
-      {isRateLimited && <RateLimitedUI />}
+    {isRateLimited && <RateLimitedUI />}
 
-      <div className="max-w-7xl mx-auto p-4 mt-6">
-        {/* Search and filter controls */}
-        <div className="mb-6 flex flex-col sm:flex-row justify-center items-center gap-4">
-          <input
-            type="text"
-            className="input input-bordered w-full max-w-md"
-            placeholder="Search petitions..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button
-            className={`btn ${
-              showSuccessful ? "btn-primary" : "btn-outline"
-            } whitespace-nowrap`}
-            onClick={() => setShowSuccessful(!showSuccessful)}
-          >
-            {showSuccessful
-              ? "All Petitions"
-              : "Successful petitions"}
-          </button>
-        </div>
-
-        {loading && (
-          <div className="text-center text-primary py-10">
-            Loading petitions...
-          </div>
-        )}
-
-        {filteredNotes.length === 0 && !isRateLimited && <NotesNotFound />}
-
-        {filteredNotes.length > 0 && !isRateLimited && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredNotes.map((note) => (
-              <NoteCard key={note._id} note={note} setNotes={setNotes} />
-            ))}
-          </div>
-        )}
+    <div className="max-w-7xl mx-auto p-4 mt-6">
+      {/* Intro Section */}
+      <div className="mb-12 text-center max-w-4xl mx-auto">
+        <h1 className="text-5xl font-bold text-green-600 mb-12">
+          Create change with consensus
+        </h1>
+        <p className="text-lg text-gray-400">
+          PetISM is a petition platform where anyone can raise awareness, gather support, and spark change completely anonymously.
+          Browse public petitions, support causes you believe in, or start one of your own.
+        </p>
       </div>
+
+      {/* Search and filter controls */}
+      <div className="mb-6 flex flex-col sm:flex-row justify-center items-center gap-4">
+        <input
+          type="text"
+          className="input input-bordered w-full max-w-md"
+          placeholder="Search petitions..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button
+          className={`btn ${showSuccessful ? "btn-primary" : "btn-outline"} whitespace-nowrap`}
+          onClick={() => setShowSuccessful(!showSuccessful)}
+        >
+          {showSuccessful ? "All Petitions" : "Successful petitions"}
+        </button>
+      </div>
+
+      {loading && (
+        <div className="text-center text-primary py-10">
+          Loading petitions...
+        </div>
+      )}
+
+      {filteredNotes.length === 0 && !isRateLimited && <NotesNotFound />}
+
+      {filteredNotes.length > 0 && !isRateLimited && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredNotes.map((note) => (
+            <NoteCard key={note._id} note={note} setNotes={setNotes} />
+          ))}
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
+
+
 };
 export default HomePage;

@@ -23,9 +23,10 @@ export async function getNoteById(req, res) {
 
 export async function createNote(req, res) {
   try {
-    const { title, content, password, image, targetLikes } = req.body;
+    const { title, content, password, image, targetLikes, creatorEmail } = req.body;
     if (!password) return res.status(400).json({ message: "Password is required" });
     if (!targetLikes) return res.status(400).json({ message: "Target likes is required" });
+    if (!creatorEmail) return res.status(400).json({ message: "Creator email is required" });
 
     const note = new Note({ 
       title, 
@@ -33,7 +34,8 @@ export async function createNote(req, res) {
       password, 
       image,
       targetLikes: parseInt(targetLikes),
-      isSuccessful: false
+      isSuccessful: false,
+      creatorEmail
     });
     
     const savedNote = await note.save();
@@ -107,6 +109,11 @@ export async function likeNote(req, res) {
     }
 
     await note.save();
+
+    // Send email notification to creator
+    if (note.creatorEmail) {
+      await sendLikesUpdateEmail(note.creatorEmail, note);
+    }
 
     res.status(200).json({ 
       likes: note.likes, 

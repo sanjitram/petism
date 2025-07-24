@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 
 import notesRoutes from "./routes/notesRoutes.js";
-import authRoutes from "./routes/authRoutes.js"; // Add this import
+import authRoutes from "./routes/authRoutes.js"; 
 import { connectDB } from "./config/db.js";
 import rateLimiter from "./middleware/rateLimiter.js";
 
@@ -25,7 +25,7 @@ const __dirname = path.resolve();
 //   );
 // }
 
-// Update the CORS configuration
+
 app.use(cors({
   origin: process.env.NODE_ENV === "production" 
     ? ["https://mern-notes-frontend-h3mc.onrender.com", "https://mern-notes-backend-6kxk.onrender.com"]
@@ -46,7 +46,7 @@ app.use(rateLimiter);
 //   next();
 // });
 
-app.use("/api/auth", authRoutes); // Add this before notesRoutes
+app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
 
 if (process.env.NODE_ENV === "production") {

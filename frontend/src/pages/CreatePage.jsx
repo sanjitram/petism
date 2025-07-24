@@ -9,7 +9,8 @@ const CreatePage = () => {
   const [content, setContent] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState("");
-  const [targetLikes, setTargetLikes] = useState(""); // Add this line
+  const [targetLikes, setTargetLikes] = useState("");
+  const [creatorEmail, setCreatorEmail] = useState(""); // Add this line
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const CreatePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title.trim() || !content.trim() || !password.trim() || !targetLikes) {
+    if (!title.trim() || !content.trim() || !password.trim() || !targetLikes || !creatorEmail) {
       toast.error("All fields are required");
       return;
     }
@@ -37,7 +38,8 @@ const CreatePage = () => {
         content,
         password,
         image,
-        targetLikes: parseInt(targetLikes), // Make sure targetLikes is sent as a number
+        targetLikes: parseInt(targetLikes),
+        creatorEmail
       });
 
       toast.success("Petition created successfully!");
@@ -140,6 +142,20 @@ const CreatePage = () => {
                     value={targetLikes}
                     onChange={(e) => setTargetLikes(e.target.value)}
                     min="1"
+                  />
+                </div>
+
+                <div className="form-control mb-4">
+                  <label className="label">
+                    <span className="label-text">Your Email (for notifications)</span>
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="input input-bordered"
+                    value={creatorEmail}
+                    onChange={(e) => setCreatorEmail(e.target.value)}
+                    required
                   />
                 </div>
 
