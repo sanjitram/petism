@@ -1,4 +1,4 @@
-# PetISM 🚀  
+# PetISM 
 **A Next-Gen Petition Platform for Change**
 
 ![PetISM Banner](https://img.shields.io/badge/Status-Deployed-success?style=for-the-badge) ![Tech Stack](https://img.shields.io/badge/MERN-Full%20Stack-blue?style=for-the-badge) ![Vercel](https://img.shields.io/badge/Vercel-Serverless-black?style=for-the-badge)
@@ -7,16 +7,15 @@ PetISM is a modern, high-performance web application designed to empower users t
 
 ---
 
-## 🔥 Technical Flex (The Good Stuff)
+## 🔥 Technical Overview
 
-This isn't just a CRUD app. PetISM leverages a cutting-edge stack to deliver a seamless experience:
 
 ### ⚡ **Serverless Backend Architecture**
 - **Vercel Serverless Functions**: The Node.js/Express backend is fully adapted to run as serverless functions on Vercel's edge network, ensuring instant scalability and zero idle costs.
 - **Fail-Open Rate Limiting**: Powered by **Upstash Redis**, our custom middleware protects API endpoints from abuse without degrading user experience during outages.
 - **Dynamic CORS**: Smarter security configuration that adapts effortlessly between local development and production environments.
 
-### 🎨 **Premium Frontend Experience**
+### 🎨 **Frontend Experience**
 - **Framer Motion**: Complex, staggered animations and page transitions bring the interface to life.
 - **Glassmorphism UI**: Custom-built `AnimatedCard` and `AnimatedInput` components feature backdrop filters, subtle glows, and micro-interactions.
 - **Particles.js Integration**: Interactive background effects that respond to user movement.
@@ -93,4 +92,4 @@ Contributions are welcome! Fork the repo, create a feature branch, and submit a 
 
 ---
 
-*Built with ❤️ and ☕ by Sanjit*
+
