@@ -1,7 +1,5 @@
-
-
 {
-  "name": "mern-notes",
+  "name": "petism",
   "version": "1.0.0",
   "description": "Petition App",
   "main": "index.js",

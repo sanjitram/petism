@@ -48,7 +48,7 @@ const NoteCard = ({ note, setNotes }) => {
     >
       <div className="card-body">
         {note.image && (
-          <img src={note.image} alt="Note" className="mb-2 max-h-32 rounded" />
+          <img src={note.image} alt="Petition" className="mb-2 max-h-32 rounded" />
         )}
         <h3 className="card-title text-base-content">{note.title}</h3>
         <p className="text-base-content/70 line-clamp-3">{note.content}</p>
@@ -58,9 +58,8 @@ const NoteCard = ({ note, setNotes }) => {
           </span>
           <div className="flex items-center gap-2">
             <button
-              className={`btn btn-ghost btn-xs flex items-center ${
-                note.liked ? "text-primary" : ""
-              }`}
+              className={`btn btn-ghost btn-xs flex items-center ${note.liked ? "text-primary" : ""
+                }`}
               onClick={(e) => handleLike(e, note._id)}
               title={note.liked ? "Already liked" : "Like"}
               disabled={note.liked}
@@ -95,9 +94,8 @@ const NoteCard = ({ note, setNotes }) => {
             )}
           </div>
           <progress
-            className={`progress w-full ${
-              note.isSuccessful ? "progress-success" : "progress-primary"
-            }`}
+            className={`progress w-full ${note.isSuccessful ? "progress-success" : "progress-primary"
+              }`}
             value={note.likes}
             max={note.targetLikes}
           />

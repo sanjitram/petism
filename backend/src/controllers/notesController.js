@@ -1,4 +1,5 @@
 import Note from "../models/Note.js";
+import { sendLikesUpdateEmail, sendCreationEmail } from "../config/email.js";
 
 export async function getAllNotes(_, res) {
   try {
@@ -28,17 +29,23 @@ export async function createNote(req, res) {
     if (!targetLikes) return res.status(400).json({ message: "Target likes is required" });
     if (!creatorEmail) return res.status(400).json({ message: "Creator email is required" });
 
-    const note = new Note({ 
-      title, 
-      content, 
-      password, 
+    const note = new Note({
+      title,
+      content,
+      password,
       image,
       targetLikes: parseInt(targetLikes),
       isSuccessful: false,
       creatorEmail
     });
-    
+
     const savedNote = await note.save();
+
+    // Send creation confirmation email
+    if (creatorEmail) {
+      await sendCreationEmail(creatorEmail, savedNote);
+    }
+
     res.status(201).json(savedNote);
   } catch (error) {
     console.error("Error in createNote controller", error);
@@ -90,7 +97,7 @@ export async function likeNote(req, res) {
   try {
     const userId = req.user.id;
     const note = await Note.findById(req.params.id);
-    
+
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
@@ -115,11 +122,11 @@ export async function likeNote(req, res) {
       await sendLikesUpdateEmail(note.creatorEmail, note);
     }
 
-    res.status(200).json({ 
-      likes: note.likes, 
+    res.status(200).json({
+      likes: note.likes,
       liked: true,
       isSuccessful: note.isSuccessful,
-      targetLikes: note.targetLikes 
+      targetLikes: note.targetLikes
     });
   } catch (error) {
     console.error("Error in likeNote controller", error);

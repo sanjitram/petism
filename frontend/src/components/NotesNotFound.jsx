@@ -9,7 +9,7 @@ const NotesNotFound = () => {
       </div>
       <h3 className="text-2xl font-bold">No petition yet</h3>
       <p className="text-base-content/70">
-        Ready to organize your thoughts? Create your first petition to get started on your journey.
+        Ready to make a difference? Create your first petition to spark change.
       </p>
       <Link to="/create" className="btn btn-primary">
         Create Your First Petition
