@@ -56,8 +56,15 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-connectDB().then(() => {
+// Connect to DB
+connectDB();
+
+// Export app for Vercel
+export default app;
+
+// Only listen if running locally (not imported)
+if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log("Server started on PORT:", PORT);
   });
-});
+}
